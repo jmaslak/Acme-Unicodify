@@ -17,7 +17,7 @@ use Carp;
 
 use Acme::Unicodify;
 use File::Temp qw{tempdir};
-use File::Slurp 9999.19; # For UTF-8
+use File::Slurper qw(read_text write_text);
 use Test::More tests => 10;
 
 binmode( STDOUT, ':encoding(UTF-8)' );
@@ -66,9 +66,9 @@ It should stay a camel.
 END_FILE
 
 my $uout = $text;
-write_file($dir . '/infile.txt', { binmode => ':utf8' }, $uout);
+write_text($dir . '/infile.txt', $uout, 'utf8');
 $unify->file_to_unicode($dir . '/infile.txt', $dir . '/unifile.txt');
-my $text1 = read_file($dir . '/unifile.txt', { binmode => ':utf8' } );
+my $text1 = read_text($dir . '/unifile.txt', 'utf8' );
 
 isnt($text, $text1, 'Unicoded file does not match non-unicoded file');
 is(
@@ -78,7 +78,7 @@ is(
 );
 
 $unify->file_back_to_ascii($dir . '/unifile.txt', $dir . '/output.txt');
-my $text2 = read_file($dir . '/output.txt', { binmode => ':utf8' } );
+my $text2 = read_text($dir . '/output.txt', 'utf8' );
 
 is($text2, $text, 'Text files are lossless-ly processed');
 
