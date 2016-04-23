@@ -12,6 +12,8 @@ use v5.22;
 use strict;
 use warnings;
 
+use File::Slurper qw(read_text write_text);
+
 =head1 SYNOPSIS
 
   my $translate = Acme::Unicodify->new();
@@ -180,24 +182,19 @@ Note this will overwrite existing files and it assumes the input
 and output files are in UTF-8 encoding (or plain ASCII in the
 case that no codepoints >127 are used).
 
+This also assumes that there is sufficient memory to slurp the
+entire contents of the file into memory.
+
 =cut
 
 sub file_to_unicode {
     if ($#_ != 2) { confess 'invalid call' }
     my ($self, $in_fn, $out_fn) = @_;
 
-    open my $in_fh,  '<', $in_fn;
-    open my $out_fh, '>', $out_fn;
+    my $text = read_text($in_fn);
+    my $out  = $self->to_unicode($txt);
+    write_text($out_fn);
 
-    binmode($in_fh, ':encoding(UTF-8)');
-    binmode($out_fh, ':encoding(UTF-8)');
-
-    while (<$in_fh>) {
-        print $out_fh $self->to_unicode($_);
-    }
-
-    close $in_fh;
-    close $out_fh;
     return;
 }
 
