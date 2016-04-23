@@ -12,7 +12,7 @@ use v5.22;
 use strict;
 use warnings;
 
-use File::Slurper qw(read_text write_text);
+use File::Slurper 0.008 qw(read_text write_text);
 
 =head1 SYNOPSIS
 
@@ -175,8 +175,7 @@ This method reads the file with the named passed as the first
 argument, and produces a new output file with the name passed
 as the second argument.
 
-The routine, as it reads the input file, will call C<to_unicode>
-on each line.
+The routine will call C<to_unicode> on the contents of the file.
 
 Note this will overwrite existing files and it assumes the input
 and output files are in UTF-8 encoding (or plain ASCII in the
@@ -191,9 +190,9 @@ sub file_to_unicode {
     if ($#_ != 2) { confess 'invalid call' }
     my ($self, $in_fn, $out_fn) = @_;
 
-    my $text = read_text($in_fn);
-    my $out  = $self->to_unicode($txt);
-    write_text($out_fn);
+    my $txt = read_text($in_fn);
+    $txt = $self->to_unicode($txt);
+    write_text($out_fn, $txt);
 
     return;
 }
@@ -204,8 +203,7 @@ This method reads the file with the named passed as the first
 argument, and produces a new output file with the name passed
 as the second argument.
 
-The routine, as it reads the input file, will call C<back_to_ascii>
-on each line.
+The routine will call C<back_to_ascii> on the contents of the file.
 
 Note this will overwrite existing files and it assumes the input
 and output files are in UTF-8 encoding (or plain ASCII in the
@@ -217,18 +215,10 @@ sub file_back_to_ascii {
     if ($#_ != 2) { confess 'invalid call' }
     my ($self, $in_fn, $out_fn) = @_;
 
-    open my $in_fh,  '<', $in_fn;
-    open my $out_fh, '>', $out_fn;
+    my $txt = read_text($in_fn);
+    my $out = $self->back_to_ascii($txt);
+    write_text($out_fn, $out);
 
-    binmode($in_fh, ':encoding(UTF-8)');
-    binmode($out_fh, ':encoding(UTF-8)');
-
-    while (<$in_fh>) {
-        print $out_fh $self->back_to_ascii($_);
-    }
-
-    close $in_fh;
-    close $out_fh;
     return;
 }
 
