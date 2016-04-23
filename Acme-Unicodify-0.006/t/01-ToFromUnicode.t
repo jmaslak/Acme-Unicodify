@@ -15,6 +15,7 @@ use autodie;
 use Carp;
 
 use Acme::Unicodify;
+use Encode qw(encode);
 use File::Temp qw{tempdir};
 use File::Slurper qw(read_text write_text);
 use Test::More tests => 10;
@@ -60,20 +61,25 @@ is(
 my $text = <<'END_FILE';
 This is a test.  I want to throw in a bogus Unicode character just to validate that it is preserved.
 This is line 2
-This is a camel: 🐪
+This is a camel: \x{1F42A}
 It should stay a camel.
 END_FILE
-$text = Encode::decode('UTF-8', $text);
 
-my $uout = $text;
-write_text($dir . '/infile.txt', $uout);
+$text = "
+This is a test.  I want to throw in a bogus Unicode character just to validate that it is preserved.
+This is line 2
+This is a camel: \x{1F42A}
+It should stay a camel.";
+
+write_text($dir . '/infile.txt', $text);
 $unify->file_to_unicode($dir . '/infile.txt', $dir . '/unifile.txt');
+my $textin = read_text($dir . '/infile.txt');
 my $text1 = read_text($dir . '/unifile.txt');
 
 isnt($text, $text1, 'Unicoded file does not match non-unicoded file');
 is(
     scalar(split /\b{gcb}/, $text1),
-    scalar(split /\b{gcb}/, $text),
+    scalar(split /\b{gcb}/, $textin),
     'File length is unchanged'
 );
 

@@ -18,6 +18,7 @@ my %WriteMakefileArgs = (
   "NAME" => "Acme::Unicodify",
   "PREREQ_PM" => {
     "Carp" => 0,
+    "File::Slurper" => "0.008",
     "Unicode::Normalize" => 0,
     "autodie" => 0,
     "strict" => 0,
@@ -25,11 +26,11 @@ my %WriteMakefileArgs = (
     "warnings" => 0
   },
   "TEST_REQUIRES" => {
-    "File::Slurper" => 0,
+    "Encode" => 0,
     "File::Temp" => 0,
     "Test::More" => 0
   },
-  "VERSION" => "0.005",
+  "VERSION" => "0.006",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -38,7 +39,8 @@ my %WriteMakefileArgs = (
 
 my %FallbackPrereqs = (
   "Carp" => 0,
-  "File::Slurper" => 0,
+  "Encode" => 0,
+  "File::Slurper" => "0.008",
   "File::Temp" => 0,
   "Test::More" => 0,
   "Unicode::Normalize" => 0,
