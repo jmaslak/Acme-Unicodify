@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2015 J. Maslak
+# Copyright (C) 2015 Joelle Maslak
 # All Rights Reserved - See License
 #
 
@@ -124,9 +124,9 @@ any character (Unicode or not) is passed through unchanged.
 
 sub to_unicode {
     my $self = shift;
-    my $str = shift;
+    my $str  = shift;
 
-    if (!defined($str)) { return; }
+    if ( !defined($str) ) { return; }
 
     my @parts = split /\b{gcb}/, $str;
     my $out = '';
@@ -152,9 +152,9 @@ passed through unchanged.
 
 sub back_to_ascii {
     my $self = shift;
-    my $str = shift;
+    my $str  = shift;
 
-    if (!defined($str)) { return; }
+    if ( !defined($str) ) { return; }
 
     my @parts = split /\b{gcb}/, $str;
     my $out = '';
@@ -187,12 +187,12 @@ entire contents of the file into memory.
 =cut
 
 sub file_to_unicode {
-    if ($#_ != 2) { confess 'invalid call' }
-    my ($self, $in_fn, $out_fn) = @_;
+    if ( $#_ != 2 ) { confess 'invalid call' }
+    my ( $self, $in_fn, $out_fn ) = @_;
 
     my $txt = read_text($in_fn);
     $txt = $self->to_unicode($txt);
-    write_text($out_fn, $txt);
+    write_text( $out_fn, $txt );
 
     return;
 }
@@ -212,12 +212,12 @@ case that no codepoints >127 are used).
 =cut
 
 sub file_back_to_ascii {
-    if ($#_ != 2) { confess 'invalid call' }
-    my ($self, $in_fn, $out_fn) = @_;
+    if ( $#_ != 2 ) { confess 'invalid call' }
+    my ( $self, $in_fn, $out_fn ) = @_;
 
     my $txt = read_text($in_fn);
     my $out = $self->back_to_ascii($txt);
-    write_text($out_fn, $out);
+    write_text( $out_fn, $out );
 
     return;
 }
@@ -228,9 +228,9 @@ sub _define_cache {
     $self->{_ASCII_CACHE} = {};
 
     my $i = 0;
-    foreach my $key (keys %_TRANSLATE) {
+    foreach my $key ( keys %_TRANSLATE ) {
         $i++;
-        $self->{_ASCII_CACHE}->{$self->to_unicode($key)} = $key;
+        $self->{_ASCII_CACHE}->{ $self->to_unicode($key) } = $key;
     }
     return;
 }
